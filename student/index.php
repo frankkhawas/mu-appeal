@@ -45,6 +45,7 @@
 			<div>
 				<a href="">Home</a>
 				<a href="" class="ml-3">Appeal History</a>
+				<a href="../logout.php" class="ml-3">logout</a>
 			</div>
 			<div>
 				<h6 class="text-white">Welcome <?php echo $username ?></h6>
@@ -53,7 +54,7 @@
 	</div>
 	<div class="container mt-3">
 		<div class="row justify-content-center">
-			<div class="col-md-6">
+			<div class="col-md-12">
 				<?php if(isset($_GET['error'])) { ?>
 	          		<div class="alert alert-danger alert-dismissible fade show">
 	          			<a href="index.php" class="close">&times;</a>
@@ -89,25 +90,57 @@
 					</div>
 				<?php } else { ?>
 					<div class="row">
-						<div class="col-md-12 card card-body">
+						<div class="col-md-7 card card-body">
+							<?php if($appeal_item['status'] == "rejected"): ?>
+								<p class="bg-danger text-light p-3"><strong> Your appeal is rejected you can reapeal again</strong></p>
+							<?php elseif($appeal_item['status'] == "accepted"): ?>
+								<p class="bg-success text-light p-3"><strong>Congatulation your appeal is accepted wait for result</strong></p>
+							<?php endif ?>
 							<div class="d-flex justify-content-between mb-3">
-								<h4 class="text-center">Current Appeal</h4>
-								<button class="btn btn-success" data-target="#addSubject" data-toggle="modal">Add Subject</button>
+								<div>
+									<h4 class="text-center">Current Appeal</h4>
+								</div>
+								<div>
+									<?php if($appeal_item['status'] == "processing"): ?>
+										<button class="btn btn-success" data-target="#addSubject" data-toggle="modal">Add Subject</button>
+									<?php else: ?>
+										<?php if($appeal_item['status'] == "rejected"): ?>
+											<form action="save_appeal.php" method="post">
+												<input hidden type="number" name="appeal_id" value="<?php echo $appeal_item['appeal_id'] ?>" class="form-control" required>
+												<button type="submit" class="btn btn-success" name="reappeal">Reappeal</button>
+											</form>
+										<?php endif ?>
+									<?php endif ?>
+								</div>
 							</div>
-							
+
 							<table class="table table-striped table-border">
 								<tr>
-									<th>receipt_number </th>
-									<th>semister</th>
-									<th>appeal_date</th>
+									<th>Receipt_number </th>
+									<th>Semister</th>
+									<th>Appeal_date</th>
+									<th>Status</th>
+									<th>Stage</th>
 								</tr>
 								<tr>
 									<td><?php echo $appeal_item['receipt_number'] ?></td>
 									<td><?php echo $appeal_item['semister'] ?></td>
 									<td><?php echo $appeal_item['appeal_date'] ?></td>
+									<td><?php echo $appeal_item['status'] ?></td>
+									<td><?php echo $appeal_item['stage'] ?></td>
 								</tr>
 							</table>
-							<hr>
+						</div>
+						<div class="col-md-4 card card-body" style="margin-left: 12px;">
+							<h3>Stage Meaning</h3>
+							<ul class="list-unstyled">
+								<li><span class="badge bg-danger text-white">1</span> Stage 1 HOD</li>
+								<li><span class="badge bg-dark text-white">2</span> Stage 2 Dean</li>
+								<li><span class="badge bg-warning text-white">3</span> Stage 3 Sanate</li>
+								<li><span class="badge bg-success text-white">4</span> Appel proccessed </li>
+							</ul>
+						</div>
+						<div class="col-md-12 card card-body mt-3">
 							<h5>Course</h5>	
 							<?php 
 								$appeal_id = $appeal_item['appeal_id']; 

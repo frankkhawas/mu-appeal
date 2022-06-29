@@ -23,7 +23,7 @@
 				$_SESSION['is_student'] = true;
 				header("location:student/");
 			}
-			else {
+			elseif($_SESSION['type'] == 'hod' || $_SESSION['type'] == 'dean' || $_SESSION['type'] == 'senate') {
 				$_SESSION['is_staff'] = true;
 				header("location:staff/");
 			}

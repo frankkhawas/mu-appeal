@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 28, 2022 at 10:21 AM
--- Server version: 10.4.14-MariaDB
--- PHP Version: 7.2.33
+-- Host: localhost
+-- Generation Time: Jun 29, 2022 at 03:44 AM
+-- Server version: 10.4.22-MariaDB
+-- PHP Version: 8.1.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -42,22 +42,24 @@ CREATE TABLE `appeal_reccomendation` (
 
 CREATE TABLE `tblappeal` (
   `appeal_id` int(11) NOT NULL,
-  `receipt_number` int(30) NOT NULL,
+  `receipt_number` bigint(60) NOT NULL,
   `semister` enum('semister 1','semister 2') NOT NULL,
   `appeal_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `student` int(11) NOT NULL,
-  `is_current` tinyint(4) NOT NULL DEFAULT 1
+  `is_current` tinyint(4) NOT NULL DEFAULT 1,
+  `status` enum('rejected','processing','accepted') NOT NULL DEFAULT 'processing',
+  `stage` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tblappeal`
 --
 
-INSERT INTO `tblappeal` (`appeal_id`, `receipt_number`, `semister`, `appeal_date`, `student`, `is_current`) VALUES
-(1, 122334455, 'semister 1', '2022-06-14 06:50:47', 1, 0),
-(5, 445544332, 'semister 1', '2022-06-16 01:40:09', 1, 1),
-(6, 12345678, 'semister 2', '2022-06-18 02:27:57', 1, 1),
-(11, 12323344, 'semister 1', '2022-06-19 04:32:58', 2, 1);
+INSERT INTO `tblappeal` (`appeal_id`, `receipt_number`, `semister`, `appeal_date`, `student`, `is_current`, `status`, `stage`) VALUES
+(5, 445544332, 'semister 1', '2022-06-16 01:40:09', 1, 0, 'rejected', 3),
+(6, 12345678, 'semister 2', '2022-06-18 02:27:57', 1, 0, 'accepted', 4),
+(11, 12323344, 'semister 1', '2022-06-19 04:32:58', 2, 1, 'rejected', 0),
+(12, 34556789000, 'semister 1', '2022-06-29 01:31:38', 1, 1, 'processing', 3);
 
 -- --------------------------------------------------------
 
@@ -175,7 +177,7 @@ CREATE TABLE `tbluser` (
   `sex` char(1) NOT NULL,
   `phone` bigint(20) NOT NULL,
   `email` varchar(60) NOT NULL,
-  `type` varchar(25) NOT NULL,
+  `type` varchar(25) NOT NULL DEFAULT 'student',
   `username` varchar(60) NOT NULL,
   `password` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -186,9 +188,9 @@ CREATE TABLE `tbluser` (
 
 INSERT INTO `tbluser` (`user_id`, `fname`, `lname`, `sex`, `phone`, `email`, `type`, `username`, `password`) VALUES
 (1, 'Frank', 'Mpili', 'F', 768654567, 'mpili@gmail.com', 'student', 'mpili', '8cb2237d0679ca88db6464eac60da96345513964'),
-(5, 'Ronaldo', 'philimon', 'M', 768654567, 'ronaldo@gmail.com', 'student', 'ronaldo', '348162101fc6f7e624681b7400b085eeac6df7bd'),
-(12, 'kkkkk', 'mmmm', '', 255765502454, 'kkk@gmail.com', '', 'kkkk', 'da39a3ee5e6b4b0d3255bfef95601890afd80709'),
-(13, 'kkkkk', 'mmmm', '', 255765502454, 'kkk@gmail.com', '', 'kkkk', '0df293125f838199107b56e8e01aa773a4022ae3');
+(5, 'Ronaldo', 'philimon', 'M', 768654567, 'ronaldo@gmail.com', 'senate', 'maguya', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220'),
+(12, 'kkkkk', 'mmmm', '', 255765502454, 'kkk@gmail.com', 'hod', 'tupokigwe', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220'),
+(13, 'kkkkk', 'mmmm', '', 255765502454, 'kkk@gmail.com', 'dean', 'sungau', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220');
 
 -- --------------------------------------------------------
 
@@ -212,7 +214,10 @@ INSERT INTO `tbl_appeal_course` (`ac_id`, `course`, `appeal`, `fe_marks`, `date_
 (6, 1, 5, 13, '2022-06-19 04:07:46'),
 (12, 2, 5, 32, '2022-06-19 04:27:49'),
 (13, 2, 11, 23, '2022-06-19 04:33:20'),
-(15, 1, 11, 24, '2022-06-19 04:33:45');
+(15, 1, 11, 24, '2022-06-19 04:33:45'),
+(16, 1, 12, 12, '2022-06-29 01:31:47'),
+(17, 2, 12, 32, '2022-06-29 01:31:54'),
+(18, 3, 12, 32, '2022-06-29 01:32:02');
 
 --
 -- Indexes for dumped tables
@@ -297,7 +302,7 @@ ALTER TABLE `appeal_reccomendation`
 -- AUTO_INCREMENT for table `tblappeal`
 --
 ALTER TABLE `tblappeal`
-  MODIFY `appeal_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `appeal_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `tblcourse`
@@ -339,7 +344,7 @@ ALTER TABLE `tbluser`
 -- AUTO_INCREMENT for table `tbl_appeal_course`
 --
 ALTER TABLE `tbl_appeal_course`
-  MODIFY `ac_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `ac_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Constraints for dumped tables
